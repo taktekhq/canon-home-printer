@@ -13,7 +13,7 @@ What the family can do:
 - **See what's happening**: a live queue with who sent what, and problems in plain language with
   the fix ("No progress for 2 min. Most often it's out of paper: load paper, then press Black or Color").
 - **Fix print quality** (maintainers only): nozzle check, cleaning and deep cleaning, through
-  [canon-ij-maint](https://github.com/nizarmah/canon-ij-maint). At most two deep cleanings a day.
+  [canon-ij-maint](https://github.com/taktekhq/canon-ij-maint). At most two deep cleanings a day.
 
 Website: <https://taktek.io/canon-home-printer/>
 

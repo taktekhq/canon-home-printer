@@ -1,12 +1,12 @@
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
-github.com/nizarmah/canon-ij-maint v1.0.0 h1:t4HivZVkfQTWyaKpNhtsQ+TuezdFqFqKNEer24C7oXA=
-github.com/nizarmah/canon-ij-maint v1.0.0/go.mod h1:Y1U1nd60ja865V8YC1CJp+h2zgsyFAnQ+jM/tovK1dI=
 github.com/phin1x/go-ipp v1.7.0 h1:0yAJFnwsqyReVoF4AFiWkBStPqbeK27vixG9dIt18N0=
 github.com/phin1x/go-ipp v1.7.0/go.mod h1:z1x5XLTzsx28r0RS0Wh9mM1cfUmImIosZFRP9Sq4yFE=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/stretchr/testify v1.11.1 h1:7s2iGBzp5EwR7/aIZr8ao5+dra3wiQyKjjFuvgVKu7U=
 github.com/stretchr/testify v1.11.1/go.mod h1:wZwfW3scLgRK+23gO65QZefKpKQRnfz6sD981Nm4B6U=
+github.com/taktekhq/canon-ij-maint v1.1.0 h1:3obgdZFOwmL33GaDJd0zwyd+p1+bSCcLUvK8ZLu4Ua0=
+github.com/taktekhq/canon-ij-maint v1.1.0/go.mod h1:/RbbV3ZvyphPs1C6XguX6Xx73BKmrEepfySHtZGmtqc=
 gopkg.in/yaml.v3 v3.0.1 h1:fxVm/GzAzEWqLHuvctI91KS9hhNmmWOoWu0XTYJS7CA=
 gopkg.in/yaml.v3 v3.0.1/go.mod h1:K4uyk7z7BCEPqu6E+C64Yfv1cQ7kz7rIZviUmN+EgEM=

@@ -10,7 +10,7 @@
 - Print: PDF, Word (.doc/.docx), Excel, PowerPoint and OpenDocument (converted to PDF with LibreOffice), JPG, PNG, plain text; colour or grey; copies; page ranges; up to 50 MB by default
 - Scan: PDF or JPG at 150, 300 or 600 dpi; each person sees only their own scans; kept 30 days
 - Status: live queue with who sent each job; plain-language problems with fixes (a job with no progress for 90 seconds is reported as probably out of paper)
-- Maintenance (chosen emails only): Canon PIXMA nozzle check, cleaning, deep cleaning (max two per 24 hours), via the canon-ij-maint Go package (https://nizarmah.com/canon-ij-maint/)
+- Maintenance (chosen emails only): Canon PIXMA nozzle check, cleaning, deep cleaning (max two per 24 hours), via the canon-ij-maint Go package (https://taktek.io/canon-ij-maint/)
 - Security: listens on 127.0.0.1 only; verifies every Cloudflare Access JWT (signature, AUD, issuer, expiry); refuses all requests until configured
 - Cost: free; Cloudflare Tunnel and Access are free for up to 50 users
 - Made by Taktek and Nizar Mahmoud. Not affiliated with Canon Inc.

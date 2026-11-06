@@ -20,7 +20,7 @@ import (
 	"time"
 	"unicode/utf8"
 
-	canonij "github.com/nizarmah/canon-ij-maint"
+	canonij "github.com/taktekhq/canon-ij-maint"
 
 	"github.com/taktekhq/canon-home-printer/internal/config"
 	"github.com/taktekhq/canon-home-printer/internal/events"
