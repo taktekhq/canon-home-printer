@@ -7,7 +7,7 @@ buttons with most recent PIXMA models.
 
 What the family can do:
 
-- **Print** PDFs, Word, Excel and PowerPoint files, photos (JPG/PNG) and text: colour or black and white,
+- **Print** PDFs, Word, Excel and PowerPoint files, photos (JPG/PNG) and text: colour or grey,
   copies, page ranges. Office files are converted to PDF with LibreOffice first.
 - **Scan** from the glass to PDF or JPG. Each person only sees their own scans (kept 30 days).
 - **See what's happening**: a live queue with who sent what, and problems in plain language with
