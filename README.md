@@ -51,6 +51,13 @@ phone or laptop ──HTTPS──> Cloudflare Access (sign-in by email code)
    scanimage -L   # the scanner name for CHP_SCANNER
    ```
 
+   For stronger colour and deeper black on plain paper (tested on the G3010; prints take about twice
+   as long):
+
+   ```bash
+   sudo lpadmin -p Canon_G3010 -o StpColorCorrection-default=Bright -o Resolution-default=600dpi
+   ```
+
    Ubuntu desktop may auto-create a second queue with a wrong driver when the printer is plugged
    in; delete it.
 
