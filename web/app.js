@@ -169,10 +169,13 @@ fileInput.addEventListener("change", showFile);
 ["dragleave", "drop"].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove("drag"); }));
 drop.addEventListener("drop", e => { if (e.dataTransfer.files.length) { fileInput.files = e.dataTransfer.files; showFile(); } });
 
-$$(".stepper button").forEach(b => b.addEventListener("click", () => {
-  const i = $("#copies");
-  i.value = Math.min(50, Math.max(1, (parseInt(i.value, 10) || 1) + Number(b.dataset.step)));
-}));
+const pagesInput = $("#pages");
+function showPages() {
+  const some = $('input[name="which"]:checked').value === "some";
+  pagesInput.hidden = !some;
+  if (some) pagesInput.focus(); else pagesInput.value = "";
+}
+$$('input[name="which"]').forEach(r => r.addEventListener("change", showPages));
 
 $("#print-form").addEventListener("submit", (e) => {
   e.preventDefault();
@@ -183,9 +186,10 @@ $("#print-form").addEventListener("submit", (e) => {
   const data = new FormData();
   data.append("file", f);
   data.append("copies", form.copies.value || "1");
+  if (form.which.value === "some" && !form.pages.value.trim()) { banner("Type which pages to print, like 1-3, 5."); pagesInput.focus(); return; }
   data.append("color", form.color.value);
-  data.append("pages", form.pages.value.trim());
-  data.append("fit", form.fit.checked ? "true" : "false");
+  data.append("pages", form.which.value === "some" ? form.pages.value.trim() : "");
+  data.append("fit", form.fit.value);
   const btn = $("#print-btn");
   btn.disabled = true;
   btn.textContent = "Uploading…";
@@ -203,7 +207,7 @@ $("#print-form").addEventListener("submit", (e) => {
     try { body = JSON.parse(xhr.responseText); } catch {}
     if (xhr.status >= 200 && xhr.status < 300) {
       banner(`Sent to the printer. Watch its progress under “Your prints”.`, "ok", 6000);
-      form.reset(); showFile(); refresh();
+      form.reset(); pagesInput.hidden = true; showFile(); refresh();
     } else if (xhr.status === 401) {
       banner("Your sign-in expired. Reload the page to sign in again.");
     } else {

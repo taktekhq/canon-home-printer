@@ -83,7 +83,7 @@ h3 { font-size: 15px; margin: 16px 0 6px; color: var(--muted); }
 .field.small { flex: 0 0 auto; }
 .label { display: block; font-size: 14px; font-weight: 600; color: var(--muted); margin-bottom: 6px; }
 input[type="text"], input[type="number"] { width: 100%; border: 1px solid var(--line); background: var(--surface); border-radius: 10px; padding: 10px 12px; }
-.seg { display: flex; background: var(--surface-2); border-radius: 10px; padding: 3px; }
+.seg { display: flex; gap: 2px; background: var(--surface-2); border-radius: 10px; padding: 3px; }
 .seg label { flex: 1; }
 .seg input { position: absolute; opacity: 0; pointer-events: none; }
 .seg span { display: block; text-align: center; padding: 8px 6px; border-radius: 8px; cursor: pointer; font-size: 15px; font-weight: 600; color: var(--muted); }
@@ -158,3 +158,6 @@ button.big { width: 100%; margin-top: 16px; padding: 14px; font-size: 18px; }
 dialog { border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); color: var(--text); max-width: 420px; width: calc(100% - 32px); }
 dialog::backdrop { background: rgba(0,0,0,.4); }
 .foot { color: var(--muted); font-size: 13.5px; padding-bottom: 24px; text-align: center; }
+
+#pages { margin-top: 8px; width: 100%; }
+.seg span { min-height: 42px; display: flex; align-items: center; justify-content: center; }
