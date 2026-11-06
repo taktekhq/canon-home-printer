@@ -14,6 +14,8 @@ What the family can do:
 - **Fix print quality** (maintainers only): nozzle check, cleaning and deep cleaning, through
   [canon-ij-maint](https://github.com/nizarmah/canon-ij-maint). At most two deep cleanings a day.
 
+Website: <https://taktek.io/canon-home-printer/>
+
 One Go binary with the page built in. It needs CUPS, `lp`, and `scanimage` (SANE).
 
 ## How it fits together

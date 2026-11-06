@@ -1,0 +1,443 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>canon-home-printer: print and scan on your home printer from any phone</title>
+<meta name="description" content="Free, open-source web app to print, scan and check a home printer from anywhere. Built for a USB Canon PIXMA G3010 on a Linux laptop, signed in with your email through Cloudflare. No open ports.">
+<link rel="canonical" href="https://taktek.io/canon-home-printer/">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#c2185b">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="canon-home-printer">
+<meta property="og:title" content="Your home printer, from any phone">
+<meta property="og:description" content="Print, scan and see what the printer is doing from anywhere, signed in with your own email. Free and open source, for Linux and Canon PIXMA.">
+<meta property="og:url" content="https://taktek.io/canon-home-printer/">
+<meta property="og:image" content="https://taktek.io/canon-home-printer/img/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Two phone screens of canon-home-printer: the Print tab and the Status tab showing a Canon G3010 ready.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://taktek.io/canon-home-printer/img/og.jpg">
+<meta name="twitter:title" content="Your home printer, from any phone">
+<meta name="twitter:description" content="Print, scan and check a home printer from anywhere. Free, open source, no open ports.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='10' cy='12' r='7' fill='%2300a0d6'/%3E%3Ccircle cx='22' cy='12' r='7' fill='%23d6006f' fill-opacity='.85'/%3E%3Ccircle cx='16' cy='21' r='7' fill='%23f5c400' fill-opacity='.85'/%3E%3C/svg%3E">
+<link rel="alternate" type="text/plain" title="LLM summary" href="llms.txt">
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@graph": [
+  {
+   "@type": "SoftwareApplication",
+   "name": "canon-home-printer",
+   "url": "https://taktek.io/canon-home-printer/",
+   "applicationCategory": "UtilitiesApplication",
+   "operatingSystem": "Linux",
+   "softwareVersion": "1.0",
+   "license": "https://opensource.org/licenses/MIT",
+   "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+   },
+   "codeRepository": "https://github.com/taktekhq/canon-home-printer",
+   "programmingLanguage": "Go",
+   "description": "Free, open-source web app that lets a family print, scan and check a home printer (built for the Canon PIXMA G3010) from any phone, through Cloudflare Tunnel and Cloudflare Access, with no open ports.",
+   "featureList": [
+    "Print PDF, JPG, PNG and text from any phone",
+    "Scan to PDF or JPG, private per person",
+    "Live print queue showing who sent what",
+    "Plain-language problems with fixes, such as out of paper",
+    "Canon PIXMA cleaning, deep cleaning and nozzle check",
+    "Email sign-in through Cloudflare Access"
+   ],
+   "screenshot": "https://taktek.io/canon-home-printer/img/print.jpg",
+   "image": "https://taktek.io/canon-home-printer/img/og.jpg",
+   "author": {
+    "@type": "Organization",
+    "name": "Taktek",
+    "url": "https://taktek.io/"
+   }
+  },
+  {
+   "@type": "HowTo",
+   "name": "How to print to a USB home printer from anywhere",
+   "tool": [
+    {
+     "@type": "HowToTool",
+     "name": "A Linux computer that stays on, with the printer plugged in by USB"
+    },
+    {
+     "@type": "HowToTool",
+     "name": "A domain on Cloudflare"
+    }
+   ],
+   "step": [
+    {
+     "@type": "HowToStep",
+     "name": "Add the printer to CUPS",
+     "text": "Install cups, printer-driver-gutenprint and sane-utils, plug the printer in, and add a queue with lpadmin."
+    },
+    {
+     "@type": "HowToStep",
+     "name": "Install canon-home-printer",
+     "text": "Build the Go binary, install it to /usr/local/bin, copy the env file and the systemd service from the repo's deploy folder, and start the service."
+    },
+    {
+     "@type": "HowToStep",
+     "name": "Create a Cloudflare Tunnel",
+     "text": "Point a public hostname such as print.example.com at http://127.0.0.1:8091 and run cloudflared as a service."
+    },
+    {
+     "@type": "HowToStep",
+     "name": "Protect it with Cloudflare Access",
+     "text": "Create a self-hosted Access application for the hostname with an Allow policy listing the family's emails, then put the team domain and AUD tag in the env file."
+    }
+   ]
+  },
+  {
+   "@type": "FAQPage",
+   "mainEntity": [
+    {
+     "@type": "Question",
+     "name": "Can I print to my home printer from anywhere?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Yes, if the printer is plugged into a computer that stays on. canon-home-printer runs on that computer (any Linux machine, even an old laptop or a Raspberry Pi) and gives the printer a private web page. Cloudflare Tunnel makes the page reachable from any phone or laptop on any network, and Cloudflare Access asks each person for a code sent to their email. Nothing is opened on the home router."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Does it work with a USB-only printer that has no Wi-Fi?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Yes. That is what it was built for: a Canon PIXMA G3010 connected by USB to a laptop. The website talks to the printer through CUPS on that laptop, so the printer itself never needs a network connection."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Is it safe to put my printer on the internet?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "The app only listens on 127.0.0.1, so nothing on the home network or internet can reach it directly. The only way in is the Cloudflare Tunnel, and Cloudflare Access blocks anyone whose email is not on your list before a request reaches your computer. The app also checks the signature of every Cloudflare Access token itself, so a wrong tunnel setting can't let unsigned requests through."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Which printers does it support?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Printing and the status page work with any printer CUPS can drive. Scanning works with any scanner SANE (scanimage) supports. The cleaning and nozzle check buttons send Canon's IVEC maintenance commands, tested on the PIXMA G3010; other recent PIXMA and MegaTank models that use Canon's cnijfilter2 driver probably accept them too."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Can family members see each other's scans?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "No. Each scan is saved in a folder for the email that made it, and only that person can list, open or delete it. Scans are deleted after 30 days. Everyone can see the print queue with who sent what, so they know when the printer is busy."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "What does it cost?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Nothing. canon-home-printer is free and open source (MIT). Cloudflare Tunnel and Cloudflare Access are free for up to 50 users, which covers a family. You need a domain on Cloudflare."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "What happens when the printer runs out of paper?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "The job stalls without an error from the printer. canon-home-printer notices when a job shows no progress for 90 seconds and tells everyone in plain words: most often it is out of paper; load paper, then press the printer's Black or Color button."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Can I print Word documents?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Not directly. It prints PDF, JPG, PNG and plain text. Save or export the Word document as PDF on your phone or computer first, then upload the PDF."
+     }
+    }
+   ]
+  }
+ ]
+}
+</script>
+<style>
+:root {
+  --bg: #fbfaf8;
+  --surface: #ffffff;
+  --text: #1b1b1f;
+  --muted: #5b5b66;
+  --line: #e6e3de;
+  --accent: #c2185b;
+  --accent-soft: #fde7f0;
+  --code-bg: #17171c;
+  --code-text: #f2f2f5;
+  --cyan: #00a0d6;
+  --magenta: #d6006f;
+  --yellow: #f5c400;
+  --black: #222;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111115;
+    --surface: #18181e;
+    --text: #ececf1;
+    --muted: #a3a3b0;
+    --line: #2a2a33;
+    --accent: #ff4f9a;
+    --accent-soft: #3a1426;
+    --code-bg: #0b0b0e;
+    --code-text: #f2f2f5;
+    --black: #d6d6dc;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #111115; --surface: #18181e; --text: #ececf1; --muted: #a3a3b0; --line: #2a2a33;
+  --accent: #ff4f9a; --accent-soft: #3a1426; --code-bg: #0b0b0e; --code-text: #f2f2f5; --black: #d6d6dc;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 17px/1.6 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+a { color: var(--accent); }
+.wrap { max-width: 860px; margin: 0 auto; padding: 0 16px; }
+header.top { display: flex; align-items: center; justify-content: space-between; padding: 20px 0; }
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 700; color: var(--text); text-decoration: none; }
+.dots { display: inline-flex; }
+.dots i { width: 14px; height: 14px; border-radius: 50%; margin-left: -4px; mix-blend-mode: multiply; }
+@media (prefers-color-scheme: dark) { .dots i { mix-blend-mode: normal; } }
+.dots i:nth-child(1) { background: var(--cyan); margin-left: 0; }
+.dots i:nth-child(2) { background: var(--magenta); }
+.dots i:nth-child(3) { background: var(--yellow); }
+nav a { color: var(--muted); text-decoration: none; margin-left: 18px; font-size: 15px; }
+nav a:hover { color: var(--text); }
+
+.hero { padding: 48px 0 32px; }
+.eyebrow { display: inline-block; font-size: 13px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase;
+  color: var(--accent); background: var(--accent-soft); padding: 4px 10px; border-radius: 999px; }
+h1 { font-size: clamp(32px, 6vw, 52px); line-height: 1.08; letter-spacing: -0.02em; margin: 18px 0 16px; }
+.lede { font-size: 19px; color: var(--muted); max-width: 640px; margin: 0 0 28px; }
+.cta { display: flex; flex-wrap: wrap; gap: 12px; }
+.btn { display: inline-block; padding: 11px 18px; border-radius: 10px; font-weight: 600; text-decoration: none; font-size: 15px; }
+.btn.primary { background: var(--accent); color: #fff; }
+.btn.ghost { border: 1px solid var(--line); color: var(--text); background: var(--surface); }
+
+pre { position: relative; background: var(--code-bg); color: var(--code-text); border-radius: 12px;
+  padding: 16px 18px; overflow-x: auto; font: 14.5px/1.55 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; margin: 0 0 14px; }
+pre .c { color: #8b8b99; }
+code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .92em; }
+p code, li code, td code { background: var(--accent-soft); padding: 1px 5px; border-radius: 5px; }
+.copy { position: absolute; top: 10px; right: 10px; background: #2b2b33; color: #ddd; border: 0; border-radius: 7px;
+  font-size: 12px; padding: 5px 9px; cursor: pointer; }
+.copy:hover { background: #3a3a44; }
+
+section { padding: 36px 0; border-top: 1px solid var(--line); }
+h2 { font-size: 26px; letter-spacing: -0.01em; margin: 0 0 14px; }
+h3 { font-size: 18px; margin: 22px 0 6px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; }
+.card h3 { margin-top: 0; }
+.card p { margin: 0; color: var(--muted); font-size: 15.5px; }
+
+.story { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media (max-width: 620px) { .story { grid-template-columns: 1fr; } }
+.scan { margin: 0; }
+.scan img { display: block; width: 100%; height: auto; border-radius: 8px; border: 1px solid var(--line); margin: 6px 0 10px; }
+.scan figcaption { color: var(--muted); font-size: 15px; }
+.note { color: var(--muted); font-size: 14px; margin-top: 12px; }
+
+table { width: 100%; border-collapse: collapse; font-size: 15.5px; }
+th, td { text-align: left; padding: 10px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { color: var(--muted); font-weight: 600; }
+.ok { color: #1a8a4a; font-weight: 600; }
+@media (prefers-color-scheme: dark) { .ok { color: #52d18a; } }
+.no { color: var(--muted); }
+
+details { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px 18px; margin-bottom: 10px; }
+summary { cursor: pointer; font-weight: 600; }
+details p { margin: 10px 0 2px; color: var(--muted); }
+
+footer { border-top: 1px solid var(--line); padding: 28px 0 44px; color: var(--muted); font-size: 14px; }
+
+.shots { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+@media (max-width: 620px) { .shots { grid-template-columns: 1fr; max-width: 360px; margin: 0 auto; } }
+.shot { margin: 0; }
+.shot img { display: block; width: 100%; height: auto; border-radius: 14px; border: 1px solid var(--line); }
+.shot figcaption { color: var(--muted); font-size: 14.5px; margin-top: 8px; }
+.answer { background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: 12px; padding: 14px 18px; margin: 0 0 22px; }
+.answer p { margin: 0; }
+.facts { width: 100%; }
+.facts th { width: 34%; }
+ol.steps { padding-left: 22px; }
+ol.steps li { margin-bottom: 8px; }
+.diagram { font: 14px/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; white-space: pre; overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a class="brand" href="./"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>canon-home-printer</a>
+    <nav><a href="#setup">Set up</a><a href="#faq">FAQ</a><a href="https://github.com/taktekhq/canon-home-printer">GitHub</a></nav>
+  </header>
+
+  <main>
+    <div class="hero">
+      <span class="eyebrow">Free &amp; open source · Linux · Go</span>
+      <h1>Your home printer, from any phone.</h1>
+      <p class="lede">A small website for the printer at home. Everyone in the family prints, scans and sees what the printer
+        is doing from anywhere, signed in with their own email. Built for a USB Canon PIXMA G3010 on an old Linux laptop.</p>
+      <div class="cta">
+        <a class="btn primary" href="#setup">Set it up</a>
+        <a class="btn ghost" href="https://github.com/taktekhq/canon-home-printer">View on GitHub</a>
+      </div>
+    </div>
+
+    <div class="answer">
+      <p><strong>How do I print to my home printer from anywhere?</strong> Plug the printer into a computer that stays on,
+        run canon-home-printer on it, and publish it with a free Cloudflare Tunnel behind Cloudflare Access. Each person
+        opens one address, types the code sent to their email, and prints from their phone. No port forwarding, no VPN,
+        no app to install, and the printer doesn't need Wi-Fi.</p>
+    </div>
+
+    <div class="shots">
+      <figure class="shot">
+        <img src="img/print.jpg" width="780" height="1688" loading="lazy" alt="Print tab on a phone: choose a file, colour or black and white, copies, and a Print button, with the list of your prints below.">
+        <figcaption><strong>Print.</strong> PDF, photos or text. Colour or black and white, copies, page ranges.</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="img/scan.jpg" width="780" height="1688" loading="lazy" alt="Scan tab on a phone: resolution, colour mode and PDF or JPG, a Scan button, and your saved scans.">
+        <figcaption><strong>Scan.</strong> From the glass to PDF or JPG, opened right on your phone. Only you see your scans.</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="img/status.jpg" width="780" height="1688" loading="lazy" alt="Status tab on a phone: printer ready, plugged in, queue and scanner checks, the print queue, and the print quality buttons.">
+        <figcaption><strong>Status.</strong> Who printed what, what's wrong in plain words, and the cleaning buttons.</figcaption>
+      </figure>
+    </div>
+
+    <section id="what">
+      <h2>What it does</h2>
+      <div class="grid">
+        <div class="card"><h3>Print from anywhere</h3><p>Upload from any phone or laptop, on any network. Uploads are deleted once the printer has the job.</p></div>
+        <div class="card"><h3>Scan to your phone</h3><p>Place the page, tap Scan, get a PDF or JPG in about 13 seconds at 150 dpi. Kept 30 days.</p></div>
+        <div class="card"><h3>Problems in plain words</h3><p>"No progress for 2 min. Most often it's out of paper: load paper, then press Black or Color."</p></div>
+        <div class="card"><h3>Fix faded colours</h3><p>Nozzle check, cleaning and deep cleaning for Canon PIXMA, at most two deep cleanings a day.</p></div>
+        <div class="card"><h3>Everyone signs in</h3><p>Cloudflare Access emails each person a code. Only emails on your list get in.</p></div>
+        <div class="card"><h3>One binary</h3><p>Written in Go with the page built in. Needs CUPS and SANE, both standard on Linux.</p></div>
+      </div>
+    </section>
+
+    <section id="facts">
+      <h2>At a glance</h2>
+      <table class="facts">
+        <tr><th>Price</th><td>Free, MIT license. Cloudflare Tunnel and Access are free for up to 50 users.</td></tr>
+        <tr><th>Runs on</th><td>Any Linux computer that stays on: an old laptop, a mini PC, a Raspberry Pi</td></tr>
+        <tr><th>Printer</th><td>Any CUPS printer, USB or network. Built and tested on the Canon PIXMA G3010 (MegaTank) over USB.</td></tr>
+        <tr><th>Scanner</th><td>Any SANE scanner (tested on the G3010's flatbed)</td></tr>
+        <tr><th>Files</th><td>PDF, JPG, PNG, plain text, up to 50 MB (configurable)</td></tr>
+        <tr><th>Sign-in</th><td>Cloudflare Access, one-time code by email; every request's token is verified by the app</td></tr>
+        <tr><th>Network</th><td>Listens on 127.0.0.1 only; Cloudflare Tunnel dials out, so no open ports</td></tr>
+        <tr><th>Cleanings</th><td>Canon IVEC commands from <a href="https://nizarmah.com/canon-ij-maint/">canon-ij-maint</a></td></tr>
+      </table>
+    </section>
+
+    <section id="how">
+      <h2>How it fits together</h2>
+      <div class="diagram">phone ──HTTPS──> Cloudflare Access (email code)
+                    └──> Cloudflare Tunnel ──> cloudflared on the home laptop
+                                                └──> canon-home-printer (127.0.0.1:8091)
+                                                       ├─ CUPS ──USB──> printer
+                                                       └─ scanimage ──> scanner</div>
+      <p>CUPS hides who sent each job from other users, so the app keeps its own small activity log and shows a name next to
+        every job. That way everyone knows whose print is in the way.</p>
+    </section>
+
+    <section id="setup">
+      <h2>Set it up</h2>
+      <ol class="steps">
+        <li><strong>Add the printer to CUPS.</strong>
+          <pre><code>sudo apt install cups printer-driver-gutenprint sane-utils
+sudo lpadmin -p Canon_G3010 -E -v "$(lpinfo -v | grep -o 'usb://Canon/[^ ]*')" \
+  -m "$(lpinfo -m | grep -i g3010 | head -1 | cut -d' ' -f1)" -o PageSize=A4</code></pre></li>
+        <li><strong>Install the app</strong> (Go 1.22+):
+          <pre><code>git clone https://github.com/taktekhq/canon-home-printer
+cd canon-home-printer &amp;&amp; go build -o canon-home-printer ./cmd/canon-home-printer
+sudo install canon-home-printer /usr/local/bin/
+sudo install -m 640 deploy/canon-home-printer.env.example /etc/canon-home-printer.env
+sudo cp deploy/canon-home-printer.service /etc/systemd/system/
+sudo systemctl enable --now canon-home-printer</code></pre></li>
+        <li><strong>Create a Cloudflare Tunnel</strong> with a public hostname, say <code>print.example.com</code>, pointing at
+          <code>http://127.0.0.1:8091</code>, and run <code>cloudflared</code> as a service.</li>
+        <li><strong>Protect it with Cloudflare Access:</strong> a self-hosted application for that hostname, an Allow policy with
+          the family's emails, and the One-time PIN login. Put the team domain and the application's AUD tag in
+          <code>/etc/canon-home-printer.env</code> and restart the service.</li>
+      </ol>
+      <p>Full steps and every setting are in the <a href="https://github.com/taktekhq/canon-home-printer#readme">README</a>.</p>
+    </section>
+
+    <section id="faq">
+      <h2>Questions</h2>
+      <details open>
+        <summary>Can I print to my home printer from anywhere?</summary>
+        <p>Yes, if the printer is plugged into a computer that stays on. canon-home-printer runs on that computer (any Linux machine, even an old laptop or a Raspberry Pi) and gives the printer a private web page. Cloudflare Tunnel makes the page reachable from any phone or laptop on any network, and Cloudflare Access asks each person for a code sent to their email. Nothing is opened on the home router.</p>
+      </details>
+      <details>
+        <summary>Does it work with a USB-only printer that has no Wi-Fi?</summary>
+        <p>Yes. That is what it was built for: a Canon PIXMA G3010 connected by USB to a laptop. The website talks to the printer through CUPS on that laptop, so the printer itself never needs a network connection.</p>
+      </details>
+      <details>
+        <summary>Is it safe to put my printer on the internet?</summary>
+        <p>The app only listens on 127.0.0.1, so nothing on the home network or internet can reach it directly. The only way in is the Cloudflare Tunnel, and Cloudflare Access blocks anyone whose email is not on your list before a request reaches your computer. The app also checks the signature of every Cloudflare Access token itself, so a wrong tunnel setting can't let unsigned requests through.</p>
+      </details>
+      <details>
+        <summary>Which printers does it support?</summary>
+        <p>Printing and the status page work with any printer CUPS can drive. Scanning works with any scanner SANE (scanimage) supports. The cleaning and nozzle check buttons send Canon's IVEC maintenance commands, tested on the PIXMA G3010; other recent PIXMA and MegaTank models that use Canon's cnijfilter2 driver probably accept them too.</p>
+      </details>
+      <details>
+        <summary>Can family members see each other's scans?</summary>
+        <p>No. Each scan is saved in a folder for the email that made it, and only that person can list, open or delete it. Scans are deleted after 30 days. Everyone can see the print queue with who sent what, so they know when the printer is busy.</p>
+      </details>
+      <details>
+        <summary>What does it cost?</summary>
+        <p>Nothing. canon-home-printer is free and open source (MIT). Cloudflare Tunnel and Cloudflare Access are free for up to 50 users, which covers a family. You need a domain on Cloudflare.</p>
+      </details>
+      <details>
+        <summary>What happens when the printer runs out of paper?</summary>
+        <p>The job stalls without an error from the printer. canon-home-printer notices when a job shows no progress for 90 seconds and tells everyone in plain words: most often it is out of paper; load paper, then press the printer's Black or Color button.</p>
+      </details>
+      <details>
+        <summary>Can I print Word documents?</summary>
+        <p>Not directly. It prints PDF, JPG, PNG and plain text. Save or export the Word document as PDF on your phone or computer first, then upload the PDF.</p>
+      </details>
+    </section>
+    <p class="note">Last updated 6 November 2026.</p>
+  </main>
+
+  <footer>
+    <p>canon-home-printer is MIT-licensed, by <a href="https://taktek.io/">Taktek</a> and Nizar Mahmoud.
+      Its sister tool <a href="https://nizarmah.com/canon-ij-maint/">canon-ij-maint</a> deep cleans Canon PIXMA printers from Linux.
+      Not affiliated with or endorsed by Canon Inc. "Canon" and "PIXMA" are trademarks of Canon Inc.</p>
+  </footer>
+</div>
+<script>
+document.querySelectorAll("pre").forEach(function (pre) {
+  var b = document.createElement("button");
+  b.className = "copy"; b.type = "button"; b.textContent = "Copy";
+  b.addEventListener("click", function () {
+    var text = pre.querySelector("code").innerText.trim();
+    try { navigator.clipboard.writeText(text).then(function () { b.textContent = "Copied"; setTimeout(function () { b.textContent = "Copy"; }, 1400); }); } catch (e) {}
+  });
+  pre.appendChild(b);
+});
+</script>
+</body>
+</html>
