@@ -7,7 +7,8 @@ buttons with most recent PIXMA models.
 
 What the family can do:
 
-- **Print** PDFs, photos (JPG/PNG) and text files: colour or black and white, copies, page ranges.
+- **Print** PDFs, Word, Excel and PowerPoint files, photos (JPG/PNG) and text: colour or black and white,
+  copies, page ranges. Office files are converted to PDF with LibreOffice first.
 - **Scan** from the glass to PDF or JPG. Each person only sees their own scans (kept 30 days).
 - **See what's happening**: a live queue with who sent what, and problems in plain language with
   the fix ("No progress for 2 min. Most often it's out of paper: load paper, then press Black or Color").
@@ -16,7 +17,8 @@ What the family can do:
 
 Website: <https://taktek.io/canon-home-printer/>
 
-One Go binary with the page built in. It needs CUPS, `lp`, and `scanimage` (SANE).
+One Go binary with the page built in. It needs CUPS, `lp`, and `scanimage` (SANE). LibreOffice is optional:
+with `soffice` installed, Word and other office files are accepted; without it they're refused with a hint to save as PDF.
 
 ## How it fits together
 
@@ -38,7 +40,9 @@ phone or laptop ──HTTPS──> Cloudflare Access (sign-in by email code)
 
 ## Set it up
 
-1. **Printer.** Install `cups printer-driver-gutenprint sane-utils`, plug the printer in, and add a
+1. **Printer.** Install `cups printer-driver-gutenprint sane-utils` (and for Word files
+   `libreoffice-writer-nogui libreoffice-calc-nogui libreoffice-impress-nogui fonts-crosextra-carlito
+   fonts-crosextra-caladea fonts-noto-core`), plug the printer in, and add a
    queue (Gutenprint has the G3010):
 
    ```bash

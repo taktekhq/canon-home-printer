@@ -162,7 +162,7 @@ function showFile() {
   drop.classList.toggle("has-file", !!f);
   $("#drop-text").replaceChildren(...(f
     ? [h("strong", {}, f.name), h("br"), h("small", {}, `${size(f.size)} · tap to choose another`)]
-    : [h("strong", {}, "Choose a file"), h("br"), h("small", {}, "PDF, photo (JPG/PNG) or text")]));
+    : [h("strong", {}, "Choose a file"), h("br"), h("small", {}, ME && ME.office === false ? "PDF, photo (JPG/PNG) or text" : "PDF, Word, photo (JPG/PNG) or text")]));
 }
 fileInput.addEventListener("change", showFile);
 ["dragenter", "dragover"].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add("drag"); }));
@@ -192,7 +192,11 @@ $("#print-form").addEventListener("submit", (e) => {
   // XHR so we can show upload progress on slow connections.
   const xhr = new XMLHttpRequest();
   xhr.open("POST", "/api/print");
-  xhr.upload.onprogress = (ev) => { if (ev.lengthComputable) btn.textContent = `Uploading… ${Math.round(100 * ev.loaded / ev.total)}%`; };
+  xhr.upload.onprogress = (ev) => {
+    if (!ev.lengthComputable) return;
+    const pct = Math.round(100 * ev.loaded / ev.total);
+    btn.textContent = pct < 100 ? `Uploading… ${pct}%` : "Preparing…";
+  };
   xhr.onload = () => {
     btn.disabled = false; btn.textContent = "Print";
     let body = {};

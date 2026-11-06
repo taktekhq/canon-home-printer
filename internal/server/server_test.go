@@ -59,6 +59,18 @@ func (f *fakePrinter) SubmitRaw(data []byte, title, user string) (int, error) {
 func (f *fakePrinter) Cancel(id int) error                            { f.canceled = append(f.canceled, id); return nil }
 func (f *fakePrinter) RecentLog(time.Duration, int) []printer.LogLine { return nil }
 
+type fakeOffice struct{ fail bool }
+
+func (fakeOffice) Available() bool { return true }
+func (f fakeOffice) ToPDF(src, ext string) (string, func(), error) {
+	if f.fail {
+		return "", func() {}, errors.New("boom")
+	}
+	p := src + ".pdf"
+	os.WriteFile(p, []byte("%PDF"), 0o600)
+	return p, func() { os.Remove(p) }, nil
+}
+
 type fakeVerifier struct{}
 
 func (fakeVerifier) Email(tok string) (string, error) {
@@ -189,7 +201,8 @@ func TestPrintRejects(t *testing.T) {
 		fields  map[string]string
 		code    int
 	}{
-		{"a.docx", []byte("PK\x03\x04"), nil, 415},
+		{"a.docx", []byte("PK\x03\x04"), nil, 415}, // no converter in this test
+		{"a.exe", []byte("MZ"), nil, 415},
 		{"a.pdf", []byte("%PDF"), map[string]string{"pages": "1-2; rm -rf"}, 400},
 		{"big.pdf", append([]byte("%PDF"), make([]byte, 2<<20)...), nil, 413},
 	}
@@ -250,5 +263,31 @@ func TestScanFileIsPerUser(t *testing.T) {
 	}
 	if w := do(s, "GET", "/api/scans/file/..%2Fx", "mom@x.com", nil, ""); w.Code != 404 {
 		t.Fatalf("traversal: %d", w.Code)
+	}
+}
+
+func TestPrintWordDocument(t *testing.T) {
+	s, fp := setup(t)
+	s.Office = fakeOffice{}
+	b, ct := upload(t, "Letter.docx", []byte("PK\x03\x04 word"), nil)
+	if w := do(s, "POST", "/api/print", "mom@x.com", b, ct); w.Code != 200 {
+		t.Fatalf("%d %s", w.Code, w.Body)
+	}
+	if len(fp.submitted) != 1 {
+		t.Fatal("not submitted")
+	}
+	// A .docx that isn't a ZIP is refused, not converted.
+	b, ct = upload(t, "fake.docx", []byte("hello"), nil)
+	if w := do(s, "POST", "/api/print", "mom@x.com", b, ct); w.Code != 415 {
+		t.Fatalf("fake docx: %d", w.Code)
+	}
+	s.Office = fakeOffice{fail: true}
+	b, ct = upload(t, "Broken.docx", []byte("PK\x03\x04"), nil)
+	if w := do(s, "POST", "/api/print", "mom@x.com", b, ct); w.Code != 422 {
+		t.Fatalf("broken: %d", w.Code)
+	}
+	entries, _ := os.ReadDir(s.Cfg.UploadDir)
+	if len(entries) != 0 {
+		t.Fatalf("left %d files", len(entries))
 	}
 }

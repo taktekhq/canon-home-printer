@@ -44,7 +44,7 @@
    "programmingLanguage": "Go",
    "description": "Free, open-source web app that lets a family print, scan and check a home printer (built for the Canon PIXMA G3010) from any phone, through Cloudflare Tunnel and Cloudflare Access, with no open ports.",
    "featureList": [
-    "Print PDF, JPG, PNG and text from any phone",
+    "Print PDF, Word, Excel, PowerPoint, JPG, PNG and text from any phone",
     "Scan to PDF or JPG, private per person",
     "Live print queue showing who sent what",
     "Plain-language problems with fixes, such as out of paper",
@@ -159,7 +159,7 @@
      "name": "Can I print Word documents?",
      "acceptedAnswer": {
       "@type": "Answer",
-      "text": "Not directly. It prints PDF, JPG, PNG and plain text. Save or export the Word document as PDF on your phone or computer first, then upload the PDF."
+      "text": "Yes. Upload a .doc or .docx and it prints. The app converts Word, Excel, PowerPoint and OpenDocument files to PDF with LibreOffice on the home computer, in a second or two, then prints the PDF. Arabic and other right-to-left text keeps its shaping and direction."
      }
     }
    ]
@@ -312,7 +312,7 @@ ol.steps li { margin-bottom: 8px; }
     <div class="shots">
       <figure class="shot">
         <img src="img/print.jpg" width="780" height="1688" loading="lazy" alt="Print tab on a phone: choose a file, colour or black and white, copies, and a Print button, with the list of your prints below.">
-        <figcaption><strong>Print.</strong> PDF, photos or text. Colour or black and white, copies, page ranges.</figcaption>
+        <figcaption><strong>Print.</strong> PDF, Word, photos or text. Colour or black and white, copies, page ranges.</figcaption>
       </figure>
       <figure class="shot">
         <img src="img/scan.jpg" width="780" height="1688" loading="lazy" alt="Scan tab on a phone: resolution, colour mode and PDF or JPG, a Scan button, and your saved scans.">
@@ -327,12 +327,12 @@ ol.steps li { margin-bottom: 8px; }
     <section id="what">
       <h2>What it does</h2>
       <div class="grid">
-        <div class="card"><h3>Print from anywhere</h3><p>Upload from any phone or laptop, on any network. Uploads are deleted once the printer has the job.</p></div>
+        <div class="card"><h3>Print from anywhere</h3><p>PDF, Word, Excel, PowerPoint or photos, from any phone or laptop, on any network. Uploads are deleted once the printer has the job.</p></div>
         <div class="card"><h3>Scan to your phone</h3><p>Place the page, tap Scan, get a PDF or JPG in about 13 seconds at 150 dpi. Kept 30 days.</p></div>
         <div class="card"><h3>Problems in plain words</h3><p>"No progress for 2 min. Most often it's out of paper: load paper, then press Black or Color."</p></div>
         <div class="card"><h3>Fix faded colours</h3><p>Nozzle check, cleaning and deep cleaning for Canon PIXMA, at most two deep cleanings a day.</p></div>
         <div class="card"><h3>Everyone signs in</h3><p>Cloudflare Access emails each person a code. Only emails on your list get in.</p></div>
-        <div class="card"><h3>One binary</h3><p>Written in Go with the page built in. Needs CUPS and SANE, both standard on Linux.</p></div>
+        <div class="card"><h3>One binary</h3><p>Written in Go with the page built in. Needs CUPS and SANE, plus LibreOffice for Word files.</p></div>
       </div>
     </section>
 
@@ -343,7 +343,7 @@ ol.steps li { margin-bottom: 8px; }
         <tr><th>Runs on</th><td>Any Linux computer that stays on: an old laptop, a mini PC, a Raspberry Pi</td></tr>
         <tr><th>Printer</th><td>Any CUPS printer, USB or network. Built and tested on the Canon PIXMA G3010 (MegaTank) over USB.</td></tr>
         <tr><th>Scanner</th><td>Any SANE scanner (tested on the G3010's flatbed)</td></tr>
-        <tr><th>Files</th><td>PDF, JPG, PNG, plain text, up to 50 MB (configurable)</td></tr>
+        <tr><th>Files</th><td>PDF, Word (.doc, .docx), Excel, PowerPoint, OpenDocument, JPG, PNG, plain text, up to 50 MB (configurable)</td></tr>
         <tr><th>Sign-in</th><td>Cloudflare Access, one-time code by email; every request's token is verified by the app</td></tr>
         <tr><th>Network</th><td>Listens on 127.0.0.1 only; Cloudflare Tunnel dials out, so no open ports</td></tr>
         <tr><th>Cleanings</th><td>Canon IVEC commands from <a href="https://nizarmah.com/canon-ij-maint/">canon-ij-maint</a></td></tr>
@@ -365,7 +365,8 @@ ol.steps li { margin-bottom: 8px; }
       <h2>Set it up</h2>
       <ol class="steps">
         <li><strong>Add the printer to CUPS.</strong>
-          <pre><code>sudo apt install cups printer-driver-gutenprint sane-utils
+          <pre><code>sudo apt install cups printer-driver-gutenprint sane-utils \\
+  libreoffice-writer-nogui fonts-crosextra-carlito fonts-noto-core
 sudo lpadmin -p Canon_G3010 -E -v "$(lpinfo -v | grep -o 'usb://Canon/[^ ]*')" \
   -m "$(lpinfo -m | grep -i g3010 | head -1 | cut -d' ' -f1)" -o PageSize=A4</code></pre></li>
         <li><strong>Install the app</strong> (Go 1.22+):
@@ -416,7 +417,7 @@ sudo systemctl enable --now canon-home-printer</code></pre></li>
       </details>
       <details>
         <summary>Can I print Word documents?</summary>
-        <p>Not directly. It prints PDF, JPG, PNG and plain text. Save or export the Word document as PDF on your phone or computer first, then upload the PDF.</p>
+        <p>Yes. Upload a .doc or .docx and it prints. The app converts Word, Excel, PowerPoint and OpenDocument files to PDF with LibreOffice on the home computer, in a second or two, then prints the PDF. Arabic and other right-to-left text keeps its shaping and direction.</p>
       </details>
     </section>
     <p class="note">Last updated 6 November 2026.</p>

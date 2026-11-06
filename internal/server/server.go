@@ -24,6 +24,7 @@ import (
 
 	"github.com/taktekhq/canon-home-printer/internal/config"
 	"github.com/taktekhq/canon-home-printer/internal/events"
+	"github.com/taktekhq/canon-home-printer/internal/office"
 	"github.com/taktekhq/canon-home-printer/internal/printer"
 	"github.com/taktekhq/canon-home-printer/internal/scanner"
 )
@@ -39,6 +40,12 @@ type Printer interface {
 	RecentLog(since time.Duration, limit int) []printer.LogLine
 }
 
+// Converter turns an office document into a PDF.
+type Converter interface {
+	Available() bool
+	ToPDF(src, ext string) (pdf string, cleanup func(), err error)
+}
+
 // Verifier turns a request's sign-in token into an email.
 type Verifier interface {
 	Email(token string) (string, error)
@@ -50,7 +57,8 @@ type Server struct {
 	Printer  Printer
 	Scanner  *scanner.Scanner
 	Events   *events.Log
-	Verifier Verifier // nil when sign-in isn't configured
+	Verifier Verifier  // nil when sign-in isn't configured
+	Office   Converter // turns Word and other office files into PDF; nil = not offered
 	Static   fs.FS
 	Token    func(*http.Request) string
 }
@@ -210,7 +218,8 @@ func (s *Server) CanMaintain(email string) bool {
 
 func (s *Server) me(_ http.ResponseWriter, _ *http.Request, user string) (any, error) {
 	return map[string]any{"email": user, "name": s.DisplayName(user), "can_maintain": s.CanMaintain(user),
-		"printer": s.Cfg.PrinterName, "max_upload_mb": s.Cfg.MaxUpload >> 20}, nil
+		"printer": s.Cfg.PrinterName, "max_upload_mb": s.Cfg.MaxUpload >> 20,
+		"office": s.Office != nil && s.Office.Available()}, nil
 }
 
 type check struct {
@@ -482,9 +491,26 @@ func (s *Server) print(_ http.ResponseWriter, r *http.Request, user string) (any
 	head := make([]byte, 2048)
 	n, _ := io.ReadFull(f, head)
 	f.Close()
-	if kind = Sniff(head[:n], filename); kind == "" {
-		return nil, fail(415, "This kind of file can't be printed directly. Use PDF, JPG, PNG or plain text. "+
-			"For Word or other documents, save or export them as PDF first.")
+	kind = Sniff(head[:n], filename)
+	toPrint := dest
+	if kind == "" && s.Office != nil && s.Office.Available() {
+		if ext := office.Ext(filename); ext != "" && office.Looks(head[:n], ext) {
+			pdf, cleanup, err := s.Office.ToPDF(dest, ext)
+			if err != nil {
+				log.Printf("convert %s: %v", ext, err)
+				return nil, fail(422, "Couldn't open this document to print it. Open it on your phone or computer, "+
+					"save it as PDF, and print the PDF.")
+			}
+			defer cleanup()
+			kind, toPrint = ext, pdf
+		}
+	}
+	if kind == "" {
+		accepted := "PDF, JPG, PNG or plain text"
+		if s.Office != nil && s.Office.Available() {
+			accepted = "PDF, Word, Excel, PowerPoint, JPG, PNG or plain text"
+		}
+		return nil, fail(415, "This kind of file can't be printed. Use %s, or save it as PDF first.", accepted)
 	}
 	copies, _ := strconv.Atoi(strings.TrimSpace(fields["copies"]))
 	if copies < 1 {
@@ -495,7 +521,7 @@ func (s *Server) print(_ http.ResponseWriter, r *http.Request, user string) (any
 	if title == "" || title == "." {
 		title = "document"
 	}
-	id, err := s.Printer.Submit(dest, title, user, printer.PrintOptions{
+	id, err := s.Printer.Submit(toPrint, title, user, printer.PrintOptions{
 		Copies: copies, Color: color, Pages: strings.ReplaceAll(pages, " ", ""), Fit: formBool(fields["fit"], true)})
 	if err != nil {
 		return nil, err

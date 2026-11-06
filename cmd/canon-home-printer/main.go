@@ -16,6 +16,7 @@ import (
 	"github.com/taktekhq/canon-home-printer/internal/auth"
 	"github.com/taktekhq/canon-home-printer/internal/config"
 	"github.com/taktekhq/canon-home-printer/internal/events"
+	"github.com/taktekhq/canon-home-printer/internal/office"
 	"github.com/taktekhq/canon-home-printer/internal/printer"
 	"github.com/taktekhq/canon-home-printer/internal/scanner"
 	"github.com/taktekhq/canon-home-printer/internal/server"
@@ -53,6 +54,12 @@ func main() {
 		Events:  &events.Log{Path: cfg.EventLog},
 		Static:  web.Files,
 		Token:   auth.Token,
+	}
+	if conv := (&office.Converter{Command: os.Getenv("CHP_SOFFICE"), TempDir: cfg.UploadDir}); conv.Available() {
+		srv.Office = conv
+		log.Printf("Word, Excel and PowerPoint files are converted with LibreOffice")
+	} else {
+		log.Printf("LibreOffice (soffice) not found: Word and other office files are refused")
 	}
 	switch {
 	case cfg.TeamDomain != "" && cfg.AUD != "":
