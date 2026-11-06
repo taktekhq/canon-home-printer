@@ -1,0 +1,22 @@
+[Unit]
+Description=canon-home-printer (family website for the printer at home)
+After=network-online.target cups.service
+Wants=network-online.target
+
+[Service]
+# A normal user in the lp, lpadmin and scanner groups (for USB, cancelling jobs and scanning).
+User=printer
+EnvironmentFile=/etc/canon-home-printer.env
+# Activity log and scans live in /var/lib/canon-home-printer.
+StateDirectory=canon-home-printer
+Environment=CHP_DATA_DIR=/var/lib/canon-home-printer
+ExecStart=/usr/local/bin/canon-home-printer
+Restart=always
+RestartSec=3
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=read-only
+PrivateTmp=yes
+
+[Install]
+WantedBy=multi-user.target
