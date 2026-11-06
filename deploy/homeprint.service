@@ -1,0 +1,16 @@
+[Unit]
+Description=homeprint (family printer website)
+After=network-online.target cups.service
+Wants=network-online.target
+
+[Service]
+User=taktekbot
+WorkingDirectory=/home/taktekbot/src/homeprint
+EnvironmentFile=/home/taktekbot/.config/homeprint/homeprint.env
+# Only reachable from this machine. Cloudflare Tunnel is the way in.
+ExecStart=/usr/bin/python3 -m uvicorn homeprint.app:app --host 127.0.0.1 --port 8091 --proxy-headers --no-server-header
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target
